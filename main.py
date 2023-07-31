@@ -20,21 +20,24 @@ st.subheader(f"{option} for the next {days} in {place}")
 # data = get_data(place, days, option)
 if place:
     # Get the temperature/sky data
-    filtered_data = get_data(place, days)
+    try:
+        filtered_data = get_data(place, days)
 
-    # Create a temperature plot
-    if option == "Temperature":
-        temperatures = filtered_data = [dict["main"]["temp"] for dict in filtered_data]
-        dates = [dict["dt_txt"] for dict in filtered_data]
-        figure = px.line(x=dates, y=temperatures, labels={"x": "Date", "y": "Temperature (C)"})
-        st.plotly_chart(figure)
+        # Create a temperature plot
+        if option == "Temperature":
+            temperatures = filtered_data = [dict["main"]["temp"] / 10 for dict in filtered_data]
+            dates = [dict["dt_txt"] for dict in filtered_data]
+            figure = px.line(x=dates, y=temperatures, labels={"x": "Date", "y": "Temperature (C)"})
+            st.plotly_chart(figure)
 
-    if option == "Sky":
-        sky_conditions = [dict["weather"][0]["main"] for dict in filtered_data]
-        # number of images euqls the number of conditions
-        images = {"Clear" : "images/clear.png",
-                  "Clouds" : "images/clouds.png",
-                  "Rain" : "images/rain.png",
-                  "Snow" : "images/snow.png"}
-        image_paths = [images[condition] for condition in sky_conditions]
-        st.image(image_paths, width=115)
+        if option == "Sky":
+            sky_conditions = [dict["weather"][0]["main"] for dict in filtered_data]
+            # number of images euqls the number of conditions
+            images = {"Clear" : "images/clear.png",
+                      "Clouds" : "images/clouds.png",
+                      "Rain" : "images/rain.png",
+                      "Snow" : "images/snow.png"}
+            image_paths = [images[condition] for condition in sky_conditions]
+            st.image(image_paths, width=115)
+    except KeyError:
+        st.write("Oops..! That place does not exist!")
