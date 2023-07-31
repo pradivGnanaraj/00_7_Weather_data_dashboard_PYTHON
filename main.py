@@ -10,14 +10,6 @@ days = st.slider("Forecast Days", min_value=1, max_value=5,
 option = st.selectbox("Select data to view", ("Temperature", "Sky"))
 st.subheader(f"{option} for the next {days} in {place}")
 
-# Fake data testing
-# def get_data(days):
-#     dates = ["2023-29-07", "2023-30-07", "2023-31-07"]
-#     temperatures = [10, 11, 15]
-#     temperatures = [days * i for i in temperatures]
-#     return dates, temperatures
-
-# data = get_data(place, days, option)
 if place:
     # Get the temperature/sky data
     try:
@@ -25,18 +17,18 @@ if place:
 
         # Create a temperature plot
         if option == "Temperature":
-            temperatures = filtered_data = [dict["main"]["temp"] / 10 for dict in filtered_data]
-            dates = [dict["dt_txt"] for dict in filtered_data]
+            temperatures = [dicto["main"]["temp"] / 10 for dicto in filtered_data]
+            dates = [dicto["dt_txt"] for dicto in filtered_data]
             figure = px.line(x=dates, y=temperatures, labels={"x": "Date", "y": "Temperature (C)"})
             st.plotly_chart(figure)
 
         if option == "Sky":
-            sky_conditions = [dict["weather"][0]["main"] for dict in filtered_data]
-            # number of images euqls the number of conditions
+            # number of images equals the number of conditions
             images = {"Clear" : "images/clear.png",
-                      "Clouds" : "images/clouds.png",
+                      "Clouds" : "images/cloud.png",
                       "Rain" : "images/rain.png",
                       "Snow" : "images/snow.png"}
+            sky_conditions = [dicto["weather"][0]["main"] for dicto in filtered_data]
             image_paths = [images[condition] for condition in sky_conditions]
             st.image(image_paths, width=115)
     except KeyError:
